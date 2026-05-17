@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="48" viewBox="0 0 180 48">
+  <!-- Coral square background -->
+  <rect x="0" y="4" width="40" height="40" rx="8" fill="#D85A30"/>
+  
+  <!-- House shape in white -->
+  <polygon points="20,8 4,22 8,22 8,36 32,36 32,22 36,22" fill="white"/>
+  
+  <!-- Door in coral -->
+  <rect x="14" y="26" width="12" height="10" rx="2" fill="#D85A30"/>
+  
+  <!-- Text "holiday" in WHITE -->
+  <text x="52" y="34" font-family="Georgia, serif" font-size="26" font-weight="400" fill="#FFFFFF">holiday</text>
+  
+  <!-- Text "ze" in coral -->
+  <text x="143" y="34" font-family="Georgia, serif" font-size="26" font-weight="400" fill="#D85A30">ze</text>
+</svg>
