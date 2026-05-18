@@ -8,6 +8,7 @@ function Register() {
     name: "",
     email: "",
     password: "",
+    avatar: "",
     venueManager: false,
   })
   const [error, setError] = useState("")
@@ -31,12 +32,10 @@ function Register() {
       setError("Email must be a stud.noroff.no email address")
       return
     }
-
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters")
       return
     }
-
     if (formData.name.trim() === "") {
       setError("Name is required")
       return
@@ -68,9 +67,7 @@ function Register() {
       }
 
       setSuccess(true)
-      setTimeout(() => {
-        navigate("/login")
-      }, 2000)
+      setTimeout(() => navigate("/login"), 2000)
     } catch (err) {
       setError("Something went wrong. Please try again.")
       setLoading(false)
@@ -78,65 +75,48 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-2">
+    <div className="min-h-screen flex flex-col md:grid md:grid-cols-2">
 
-      {/* LEFT PANEL — Navy */}
-      <div className="bg-navy flex flex-col justify-between p-12 relative overflow-hidden">
-
-        {/* Background blobs */}
+      <div className="hidden md:flex bg-navy flex-col justify-center p-12 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-64 h-64 bg-coral/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-48 h-48 bg-green-500/10 rounded-full translate-x-1/2 translate-y-1/2"></div>
 
-        {/* Tagline */}
-        <div className="relative z-10 flex flex-col justify-center flex-1">
+        <div className="relative z-10">
           <h2 className="font-serif text-4xl text-white leading-tight mb-4">
             Join Holidaze today
           </h2>
           <p className="text-white/50 text-base leading-relaxed mb-10">
             Create your free account and start exploring unique venues across Norway and beyond.
           </p>
-
-          {/* Feature cards */}
           <div className="flex flex-col gap-3">
             <div className="bg-white/6 border border-white/10 rounded-xl p-4 flex items-center gap-4">
               <span className="text-2xl">🌿</span>
               <div>
-                <p className="text-white text-sm font-medium">
-                  Browse 500+ venues
-                </p>
-                <p className="text-white/40 text-xs mt-0.5">
-                  Cabins, city stays, eco lodges
-                </p>
+                <p className="text-white text-sm font-medium">Browse 500+ venues</p>
+                <p className="text-white/40 text-xs mt-0.5">Cabins, city stays, eco lodges</p>
               </div>
             </div>
             <div className="bg-white/6 border border-white/10 rounded-xl p-4 flex items-center gap-4">
               <span className="text-2xl">📅</span>
               <div>
-                <p className="text-white text-sm font-medium">
-                  Book instantly
-                </p>
-                <p className="text-white/40 text-xs mt-0.5">
-                  Pick dates and confirm
-                </p>
+                <p className="text-white text-sm font-medium">Book instantly</p>
+                <p className="text-white/40 text-xs mt-0.5">Pick dates and confirm</p>
               </div>
             </div>
             <div className="bg-white/6 border border-white/10 rounded-xl p-4 flex items-center gap-4">
               <span className="text-2xl">🏠</span>
               <div>
-                <p className="text-white text-sm font-medium">
-                  List your venue
-                </p>
-                <p className="text-white/40 text-xs mt-0.5">
-                  Register as a venue manager
-                </p>
+                <p className="text-white text-sm font-medium">List your venue</p>
+                <p className="text-white/40 text-xs mt-0.5">Register as a venue manager</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-sand flex items-center justify-center p-12">
+      <div className="flex-1 bg-sand flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
+
 
           <h2 className="font-serif text-3xl text-navy mb-2">
             Create account
@@ -148,12 +128,8 @@ function Register() {
           {success && (
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-center">
               <p className="text-2xl mb-2">✅</p>
-              <p className="text-sm font-medium text-green-700">
-                Account created successfully!
-              </p>
-              <p className="text-xs text-green-600 mt-1">
-                Redirecting to login...
-              </p>
+              <p className="text-sm font-medium text-green-700">Account created successfully!</p>
+              <p className="text-xs text-green-600 mt-1">Redirecting to login...</p>
             </div>
           )}
 
@@ -201,14 +177,10 @@ function Register() {
                 required
               />
               {formData.email && !formData.email.endsWith("@stud.noroff.no") && (
-                <p className="text-xs text-red-500 mt-1">
-                  Must be a stud.noroff.no email
-                </p>
+                <p className="text-xs text-red-500 mt-1">Must be a stud.noroff.no email</p>
               )}
               {formData.email && formData.email.endsWith("@stud.noroff.no") && (
-                <p className="text-xs text-green-600 mt-1">
-                  ✓ Valid Noroff email
-                </p>
+                <p className="text-xs text-green-600 mt-1">✓ Valid Noroff email</p>
               )}
             </div>
 
@@ -227,8 +199,7 @@ function Register() {
               />
             </div>
 
-        
-
+          
             <div>
               <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
                 I am registering as
@@ -244,9 +215,7 @@ function Register() {
                     }`}
                 >
                   <div className="text-2xl mb-2">🧳</div>
-                  <div className="text-sm font-medium text-navy">
-                    Customer
-                  </div>
+                  <div className="text-sm font-medium text-navy">Customer</div>
                   <div className={`text-xs mt-1 ${!formData.venueManager ? "text-coral" : "text-gray-400"}`}>
                     Browse and book venues
                   </div>
@@ -261,15 +230,14 @@ function Register() {
                     }`}
                 >
                   <div className="text-2xl mb-2">🏠</div>
-                  <div className="text-sm font-medium text-navy">
-                    Venue Manager
-                  </div>
+                  <div className="text-sm font-medium text-navy">Venue Manager</div>
                   <div className={`text-xs mt-1 ${formData.venueManager ? "text-coral" : "text-gray-400"}`}>
                     List and manage venues
                   </div>
                 </button>
               </div>
             </div>
+
             <button
               type="submit"
               disabled={loading || success}
@@ -282,10 +250,7 @@ function Register() {
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-coral font-medium hover:underline"
-            >
+            <Link to="/login" className="text-coral font-medium hover:underline">
               Log in
             </Link>
           </p>
