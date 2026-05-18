@@ -1,20 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"
 
 function Navbar() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const profile = JSON.parse(localStorage.getItem("profile") || "null");
-  const isLoggedIn = !!localStorage.getItem("token");
-  const isManager = profile?.venueManager;
+  const profile = JSON.parse(localStorage.getItem("profile") || "null")
+  const isLoggedIn = !!localStorage.getItem("token")
+  const isManager = profile?.venueManager
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("profile");
-    navigate("/");
+    localStorage.removeItem("token")
+    localStorage.removeItem("profile")
+    navigate("/")
   }
 
   return (
     <nav className="bg-white border-b border-warmgray h-16 flex items-center justify-between px-10">
+
       <Link to="/" className="font-serif text-2xl">
         <span className="text-coral">holiday</span>
         <span className="text-navy">ze</span>
@@ -23,14 +25,22 @@ function Navbar() {
       <div className="flex gap-8 items-center">
         <Link
           to="/"
-          className="text-sm text-navy hover:text-coral transition-colors"
+          className={`text-sm transition-colors ${
+            location.pathname === "/"
+              ? "text-coral font-medium"
+              : "text-navy hover:text-coral"
+          }`}
         >
           Venues
         </Link>
         {isLoggedIn && !isManager && (
           <Link
             to="/profile"
-            className="text-sm text-navy hover:text-coral transition-colors"
+            className={`text-sm transition-colors ${
+              location.pathname === "/profile"
+                ? "text-coral font-medium"
+                : "text-navy hover:text-coral"
+            }`}
           >
             My Bookings
           </Link>
@@ -38,7 +48,11 @@ function Navbar() {
         {isLoggedIn && isManager && (
           <Link
             to="/manager"
-            className="text-sm text-navy hover:text-coral transition-colors"
+            className={`text-sm transition-colors ${
+              location.pathname === "/manager"
+                ? "text-coral font-medium"
+                : "text-navy hover:text-coral"
+            }`}
           >
             Dashboard
           </Link>
@@ -74,6 +88,7 @@ function Navbar() {
                 profile?.name?.charAt(0).toUpperCase()
               )}
             </div>
+
             <span className="text-sm text-navy font-medium">
               {profile?.name}
             </span>
@@ -87,8 +102,9 @@ function Navbar() {
           </>
         )}
       </div>
+
     </nav>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar

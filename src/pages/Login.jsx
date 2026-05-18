@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { loginUser } from "../api/auth"
+import { Link } from "react-router-dom"
+import { loginUser, getProfile } from "../api/auth"
 
 function Login() {
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,47 +15,52 @@ function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+ async function handleSubmit(e) {
+  e.preventDefault()
+  setError("")
+  setLoading(true)
 
-    try {
-      const data = await loginUser(formData)
+  try {
+    const data = await loginUser(formData)
 
-      if (data.errors) {
-        setError("Invalid email or password")
-        setLoading(false)
-        return
-      }
-
-      // Save token and profile to localStorage
-      localStorage.setItem("token", data.data.accessToken)
-      localStorage.setItem("profile", JSON.stringify(data.data))
-
-      // Redirect based on role
-      if (data.data.venueManager) {
-        navigate("/manager")
-      } else {
-        navigate("/")
-      }
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
+    if (data.errors) {
+      setError("Invalid email or password")
       setLoading(false)
+      return
     }
+
+    const token = data.data.accessToken
+    const name = data.data.name
+
+    const profile = await getProfile(name, token)
+    console.log("Full profile:", profile)
+
+    localStorage.setItem("token", token)
+    localStorage.setItem("profile", JSON.stringify({
+      ...profile,
+      accessToken: token,
+    }))
+
+    if (profile.venueManager) {
+      window.location.href = "/manager"
+    } else {
+      window.location.href = "/"
+    }
+
+  } catch (err) {
+    setError("Something went wrong. Please try again.")
+    setLoading(false)
   }
+}
 
   return (
     <div className="min-h-screen grid grid-cols-2">
 
-      {/* LEFT PANEL — Navy */}
       <div className="bg-navy flex flex-col justify-center p-12 relative overflow-hidden">
 
-        {/* Background blobs */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-coral/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-48 h-48 bg-green-500/10 rounded-full translate-x-1/2 translate-y-1/2"></div>
 
-        {/* Content */}
         <div className="relative z-10">
           <h2 className="font-serif text-4xl text-white leading-tight mb-4">
             Welcome back to Holidaze
@@ -65,7 +69,6 @@ function Login() {
             Sign in to manage your bookings and discover new venues across Norway.
           </p>
 
-          {/* Feature cards */}
           <div className="flex flex-col gap-3">
             <div className="bg-white/6 border border-white/10 rounded-xl p-4 flex items-center gap-4">
               <span className="text-2xl">🧳</span>
@@ -104,7 +107,6 @@ function Login() {
         </div>
       </div>
 
-      {/* RIGHT PANEL — Form */}
       <div className="bg-sand flex items-center justify-center p-12">
         <div className="w-full max-w-md">
 
@@ -115,7 +117,6 @@ function Login() {
             Enter your stud.noroff.no credentials
           </p>
 
-          {/* Error message */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-5 flex items-center gap-2">
               <span className="text-red-500 text-sm">✕</span>
@@ -123,10 +124,8 @@ function Login() {
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-            {/* Email */}
             <div>
               <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
                 Email
@@ -142,7 +141,6 @@ function Login() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
                 Password
@@ -158,7 +156,6 @@ function Login() {
               />
             </div>
 
-            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
@@ -169,7 +166,6 @@ function Login() {
 
           </form>
 
-          {/* Register link */}
           <p className="text-center text-sm text-gray-500 mt-6">
             No account yet?{" "}
             <Link

@@ -1,27 +1,62 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { getVenueById } from "../api/venues";
-import Calendar from "../components/Calendar";
+import { useState, useEffect } from "react"
+import { useParams, Link } from "react-router-dom"
+import { getVenueById } from "../api/venues"
+import { createBooking } from "../api/bookings"
+import Calendar from "../components/Calendar"
 
 function VenueDetail() {
-  const { id } = useParams();
-  const [venue, setVenue] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedDates, setSelectedDates] = useState(null);
+  const { id } = useParams()
+  const [venue, setVenue] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedDates, setSelectedDates] = useState(null)
+  const [bookingLoading, setBookingLoading] = useState(false)
+  const [bookingSuccess, setBookingSuccess] = useState(false)
+  const [bookingError, setBookingError] = useState("")
+
+  const profile = JSON.parse(localStorage.getItem("profile") || "null")
+  const isLoggedIn = !!localStorage.getItem("token")
+  const isManager = profile?.venueManager
 
   useEffect(() => {
     async function fetchVenue() {
       try {
-        const data = await getVenueById(id);
-        setVenue(data);
-        setLoading(false);
+        const data = await getVenueById(id)
+        setVenue(data)
+        setLoading(false)
       } catch (error) {
-        console.error("Error fetching venue:", error);
-        setLoading(false);
+        console.error("Error fetching venue:", error)
+        setLoading(false)
       }
     }
-    fetchVenue();
-  }, [id]);
+    fetchVenue()
+  }, [id])
+
+  async function handleBooking() {
+    if (!selectedDates) return
+    setBookingLoading(true)
+    setBookingError("")
+
+    try {
+      const result = await createBooking({
+        dateFrom: selectedDates.checkIn.toISOString(),
+        dateTo: selectedDates.checkOut.toISOString(),
+        guests: 1,
+        venueId: id,
+      })
+
+      if (result.errors) {
+        setBookingError(result.errors[0].message)
+        setBookingLoading(false)
+        return
+      }
+
+      setBookingSuccess(true)
+    } catch (error) {
+      setBookingError("Something went wrong. Please try again.")
+    }
+
+    setBookingLoading(false)
+  }
 
   if (loading) {
     return (
@@ -31,7 +66,7 @@ function VenueDetail() {
           <p className="text-gray-500">Loading venue...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!venue) {
@@ -45,11 +80,12 @@ function VenueDetail() {
           </Link>
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="bg-sand min-h-screen">
+
       <div className="h-96 overflow-hidden relative">
         {venue.media && venue.media.length > 0 ? (
           <img
@@ -75,6 +111,7 @@ function VenueDetail() {
       </div>
 
       <div className="px-10 py-8">
+
         <p className="text-sm text-gray-400 mb-6">
           <Link to="/" className="hover:text-coral transition-colors">
             Home
@@ -88,7 +125,9 @@ function VenueDetail() {
         </p>
 
         <div className="grid grid-cols-3 gap-12">
+
           <div className="col-span-2 flex flex-col gap-6">
+
             <div>
               <h1 className="font-serif text-4xl text-navy mb-4">
                 {venue.name}
@@ -177,7 +216,9 @@ function VenueDetail() {
                   <p className="font-medium text-navy text-sm">
                     {venue.owner?.name || "Host"}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">Venue Manager</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Venue Manager
+                  </p>
                 </div>
                 <button className="px-4 py-2 text-xs font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0">
                   Contact
@@ -227,15 +268,18 @@ function VenueDetail() {
                     Guest satisfaction
                   </p>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    This venue has been rated {venue.rating} out of 5 by guests
-                    who have stayed here.
+                    This venue has been rated {venue.rating} out of 5 by
+                    guests who have stayed here.
                   </p>
                 </div>
               </div>
             </div>
+
           </div>
+
           <div>
             <div className="bg-white border border-warmgray rounded-2xl p-6 sticky top-6">
+
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="font-serif text-3xl text-coral">
                   {venue.price} kr
@@ -266,34 +310,82 @@ function VenueDetail() {
                 </div>
               )}
 
-              <div className="bg-coral/10 border border-coral/30 rounded-xl p-4 text-center mt-4">
-                <p className="font-medium text-coral text-sm mb-1">
-                  Log in to book this venue
-                </p>
-                <p className="text-xs text-coral/70 mb-4">
-                  You need an account to make a booking
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <Link
-                    to="/login"
-                    className="px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="px-4 py-2 text-sm font-medium text-white bg-coral rounded-lg hover:bg-opacity-90 transition-colors"
-                  >
-                    Register
-                  </Link>
+              {isLoggedIn ? (
+                isManager ? (
+                  <div className="bg-gray-50 border border-warmgray rounded-xl p-4 text-center mt-4">
+                    <p className="text-sm text-gray-500">
+                      Managers cannot book venues
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    {bookingSuccess ? (
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                        <p className="text-2xl mb-2">✅</p>
+                        <p className="text-sm font-medium text-green-700">
+                          Booking confirmed!
+                        </p>
+                        <p className="text-xs text-green-600 mt-1">
+                          Check your bookings page
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        {bookingError && (
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
+                            <p className="text-sm text-red-600">{bookingError}</p>
+                          </div>
+                        )}
+                        <button
+                          onClick={handleBooking}
+                          disabled={!selectedDates || bookingLoading}
+                          className="w-full py-3 bg-coral text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {bookingLoading
+                            ? "Confirming..."
+                            : !selectedDates
+                            ? "Select dates to book"
+                            : "Confirm booking"}
+                        </button>
+                        <p className="text-xs text-gray-400 text-center mt-2">
+                          You won't be charged yet
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )
+              ) : (
+                <div className="bg-coral/10 border border-coral/30 rounded-xl p-4 text-center mt-4">
+                  <p className="font-medium text-coral text-sm mb-1">
+                    Log in to book this venue
+                  </p>
+                  <p className="text-xs text-coral/70 mb-4">
+                    You need an account to make a booking
+                  </p>
+                  <div className="flex gap-2 justify-center">
+                    <Link
+                      to="/login"
+                      className="px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="px-4 py-2 text-sm font-medium text-white bg-coral rounded-lg hover:bg-opacity-90 transition-colors"
+                    >
+                      Register
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              )}
+
             </div>
           </div>
+
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default VenueDetail;
+export default VenueDetail

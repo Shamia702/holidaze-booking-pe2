@@ -1,8 +1,21 @@
 const API_BASE = "https://v2.api.noroff.dev/holidaze"
+const API_KEY = import.meta.env.VITE_API_KEY
+
+function getHeaders() {
+  const token = localStorage.getItem("token")
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+    "X-Noroff-API-Key": API_KEY,
+  }
+}
 
 export async function getVenues() {
-  const response = await fetch(`${API_BASE}/venues`)
+  const response = await fetch(
+    `${API_BASE}/venues?limit=100&page=1&sort=created&sortOrder=desc`
+  )
   const data = await response.json()
+  console.log("Total venues from API:", data.meta)
   return data.data
 }
 
@@ -12,4 +25,42 @@ export async function getVenueById(id) {
   )
   const data = await response.json()
   return data.data
+}
+
+export async function getManagerVenues(name) {
+  const response = await fetch(
+    `${API_BASE}/profiles/${name}/venues?_bookings=true`,
+    { headers: getHeaders() }
+  )
+  const data = await response.json()
+  return data.data
+}
+
+export async function createVenue(venueData) {
+  const response = await fetch(`${API_BASE}/venues`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(venueData),
+  })
+  const data = await response.json()
+  console.log("Create venue response:", data)
+  return data
+}
+
+export async function updateVenue(id, venueData) {
+  const response = await fetch(`${API_BASE}/venues/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(venueData),
+  })
+  const data = await response.json()
+  return data
+}
+
+export async function deleteVenue(id) {
+  const response = await fetch(`${API_BASE}/venues/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  })
+  return response
 }
