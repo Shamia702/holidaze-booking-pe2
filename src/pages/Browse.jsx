@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { getVenues } from "../api/venues"
+import { getVenues, searchVenues } from "../api/venues"
 
 function Browse() {
   const [venues, setVenues] = useState([])
@@ -10,39 +10,55 @@ function Browse() {
   const venuesPerPage = 12
 
   useEffect(() => {
-    async function fetchVenues() {
+    fetchAllVenues()
+  }, [])
+
+  async function fetchAllVenues() {
+    try {
+      setLoading(true)
+      const data = await getVenues()
+      setVenues(data)
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching venues:", error)
+      setLoading(false)
+    }
+  }
+
+  async function handleSearch(e) {
+    const query = e.target.value
+    setSearch(query)
+    setCurrentPage(1)
+
+    if (query.length === 0) {
+      fetchAllVenues()
+      return
+    }
+
+    if (query.length > 2) {
       try {
-        const data = await getVenues()
-        setVenues(data)
+        setLoading(true)
+        const data = await searchVenues(query)
+        setVenues(data || [])
         setLoading(false)
       } catch (error) {
-        console.error("Error fetching venues:", error)
+        console.error("Search error:", error)
         setLoading(false)
       }
     }
-    fetchVenues()
-  }, [])
-
-  function handleSearch(e) {
-    setSearch(e.target.value)
-    setCurrentPage(1)
   }
 
-  const filteredVenues = venues.filter((venue) =>
-    venue.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const totalPages = Math.ceil(venues.length / venuesPerPage)
 
-  const totalPages = Math.ceil(filteredVenues.length / venuesPerPage)
-
-  const paginatedVenues = filteredVenues.slice(
+  const paginatedVenues = venues.slice(
     (currentPage - 1) * venuesPerPage,
     currentPage * venuesPerPage
   )
 
   return (
-    <div className="bg-sand min-h-screen">
+    <div className="bg-sand min-h-screen w-full overflow-x-hidden">
 
-      <div className="bg-navy px-4 md:px-10 py-10 md:py-12">
+      <div className="bg-navy px-4 md:px-10 py-10 md:py-12 w-full overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
 
           <div className="w-full md:w-auto">
@@ -55,7 +71,7 @@ function Browse() {
             <div className="flex w-full md:w-auto">
               <input
                 type="text"
-                placeholder="Search by venue name..."
+                placeholder="Search by venue name or description..."
                 value={search}
                 onChange={handleSearch}
                 className="flex-1 md:w-96 px-4 py-3 rounded-l-lg text-sm outline-none"
@@ -66,7 +82,7 @@ function Browse() {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center flex-shrink-0">
+          <div className="hidden lg:flex items-center flex-shrink-0">
             <div className="text-center px-8">
               <div className="font-serif text-3xl text-white mb-1">500+</div>
               <div className="text-xs text-white/45">Venues</div>
@@ -90,7 +106,7 @@ function Browse() {
 
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm text-gray-500">
-            {filteredVenues.length} venues found
+            {venues.length} venues found
           </p>
         </div>
 
@@ -103,7 +119,7 @@ function Browse() {
           </div>
         )}
 
-        {!loading && filteredVenues.length === 0 && (
+        {!loading && venues.length === 0 && (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">🔍</p>
             <p className="text-lg font-medium text-navy mb-2">
@@ -115,7 +131,7 @@ function Browse() {
             <button
               onClick={() => {
                 setSearch("")
-                setCurrentPage(1)
+                fetchAllVenues()
               }}
               className="bg-coral text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-colors"
             >

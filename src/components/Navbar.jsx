@@ -84,28 +84,12 @@ function Navbar() {
               </Link>
             </>
           ) : (
-            <>
-              <div className="w-9 h-9 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-sm overflow-hidden">
-                {profile?.avatar?.url ? (
-                  <img
-                    src={profile.avatar.url}
-                    alt={profile.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  profile?.name?.charAt(0).toUpperCase()
-                )}
-              </div>
-              <span className="text-sm text-navy font-medium">
-                {profile?.name}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
-              >
-                Log out
-              </button>
-            </>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
+            >
+              Log out
+            </button>
           )}
         </div>
 
@@ -181,30 +165,12 @@ function Navbar() {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center justify-between pt-2">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-sm overflow-hidden">
-                  {profile?.avatar?.url ? (
-                    <img
-                      src={profile.avatar.url}
-                      alt={profile.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    profile?.name?.charAt(0).toUpperCase()
-                  )}
-                </div>
-                <span className="text-sm text-navy font-medium">
-                  {profile?.name}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
-              >
-                Log out
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors mt-2"
+            >
+              Log out
+            </button>
           )}
 
         </div>

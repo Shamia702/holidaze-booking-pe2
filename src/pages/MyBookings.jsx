@@ -81,56 +81,66 @@ function MyBookings() {
 
   return (
     <div className="bg-sand min-h-screen">
-      <div className="px-10 py-8">
+      <div className="px-4 md:px-10 py-6 md:py-8">
 
-        <div className="bg-white border border-warmgray rounded-2xl p-6 flex items-center gap-5 mb-8">
+        <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
+  <div className="flex items-center gap-3 md:gap-5">
 
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-2xl overflow-hidden flex-shrink-0">
-              {profile?.avatar?.url ? (
-                <img
-                  src={profile.avatar.url}
-                  alt={profile.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                profile?.name?.charAt(0).toUpperCase()
-              )}
-            </div>
-            <button
-              onClick={() => setShowAvatarModal(true)}
-              className="absolute -bottom-1 -right-1 w-6 h-6 bg-coral text-white rounded-full flex items-center justify-center text-xs hover:bg-opacity-90 transition-colors"
-            >
-              ✏
-            </button>
-          </div>
+    <div className="relative flex-shrink-0">
+      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl md:text-2xl overflow-hidden">
+        {profile?.avatar?.url ? (
+          <img
+            src={profile.avatar.url}
+            alt={profile.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          profile?.name?.charAt(0).toUpperCase()
+        )}
+      </div>
+      <button
+        onClick={() => setShowAvatarModal(true)}
+        className="absolute -bottom-1 -right-1 w-5 h-5 bg-coral text-white rounded-full flex items-center justify-center text-xs"
+      >
+        ✏
+      </button>
+    </div>
 
-          <div className="flex-1">
-            <h1 className="text-xl font-medium text-navy mb-1">
-              {profile?.name}
-            </h1>
-            <p className="text-sm text-gray-400">
-              {profile?.email}
-              {" · "}
-              Customer
-            </p>
-          </div>
+    <div className="flex-1 min-w-0">
+      <h1 className="text-base md:text-xl font-medium text-navy truncate">
+        {profile?.name}
+      </h1>
+      <p className="text-xs text-gray-400 truncate">
+        {profile?.email}
+      </p>
+      <p className="text-xs text-gray-400">
+        Customer
+      </p>
+    </div>
 
-          <button
-            onClick={() => setShowAvatarModal(true)}
-            className="px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors"
-          >
-            Edit profile
-          </button>
+    <button
+      onClick={() => setShowAvatarModal(true)}
+      className="hidden md:block px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0"
+    >
+      Edit profile
+    </button>
 
-        </div>
+  </div>
 
-        <div className="flex gap-2 mb-6">
+  <button
+    onClick={() => setShowAvatarModal(true)}
+    className="md:hidden mt-3 w-full py-2 text-xs font-medium text-coral border border-coral rounded-lg"
+  >
+    Edit profile
+  </button>
+
+</div>
+        <div className="flex gap-2 mb-6 flex-wrap">
           {["upcoming", "past", "all"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors capitalize
+              className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors capitalize
                 ${activeTab === tab
                   ? "bg-coral text-white"
                   : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
@@ -146,7 +156,7 @@ function MyBookings() {
         </div>
 
         {displayedBookings.length === 0 ? (
-          <div className="bg-white border border-warmgray rounded-2xl p-12 text-center">
+          <div className="bg-white border border-warmgray rounded-2xl p-8 md:p-12 text-center">
             <p className="text-4xl mb-4">📅</p>
             <p className="text-lg font-medium text-navy mb-2">
               No bookings found
@@ -176,10 +186,9 @@ function MyBookings() {
               return (
                 <div
                   key={booking.id}
-                  className="bg-white border border-warmgray rounded-2xl p-5 flex gap-5"
+                  className="bg-white border border-warmgray rounded-2xl p-4 md:p-5 flex gap-3 md:gap-5"
                 >
-  
-                  <div className="w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-200">
+                  <div className="w-20 h-16 md:w-24 md:h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-200">
                     {booking.venue?.media?.[0]?.url ? (
                       <img
                         src={booking.venue.media[0].url}
@@ -193,11 +202,11 @@ function MyBookings() {
                     )}
                   </div>
 
-                  <div className="flex-1">
-                    <h3 className="font-medium text-navy text-base mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-navy text-sm md:text-base mb-1 truncate">
                       {booking.venue?.name || "Venue"}
                     </h3>
-                    <p className="text-sm text-gray-400 mb-3">
+                    <p className="text-xs md:text-sm text-gray-400 mb-2 md:mb-3">
                       {"📅 "}
                       {new Date(booking.dateFrom).toLocaleDateString("en-GB", {
                         day: "numeric",
@@ -212,17 +221,15 @@ function MyBookings() {
                       })}
                       {" · "}
                       {nights} night{nights > 1 ? "s" : ""}
-                      {" · "}
-                      {booking.guests} guest{booking.guests > 1 ? "s" : ""}
                     </p>
                     <div className="flex justify-between items-center">
-                      <span className="text-coral font-medium text-sm">
+                      <span className="text-coral font-medium text-xs md:text-sm">
                         {booking.venue?.price
                           ? `${booking.venue.price * nights} kr total`
                           : ""}
                       </span>
                       <span
-                        className={`text-xs font-medium px-3 py-1 rounded-full
+                        className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full
                           ${isUpcoming
                             ? "bg-blue-50 text-blue-600"
                             : "bg-gray-100 text-gray-500"
@@ -232,7 +239,6 @@ function MyBookings() {
                       </span>
                     </div>
                   </div>
-
                 </div>
               )
             })}
@@ -243,7 +249,7 @@ function MyBookings() {
 
       {showAvatarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl p-5 md:p-6 w-full max-w-md">
 
             <div className="flex justify-between items-center mb-5">
               <h3 className="font-serif text-xl text-navy">Edit profile</h3>
@@ -260,7 +266,7 @@ function MyBookings() {
             </div>
 
             <div className="flex items-center gap-4 mb-5 pb-5 border-b border-warmgray">
-              <div className="w-14 h-14 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl overflow-hidden flex-shrink-0">
                 {profile?.avatar?.url ? (
                   <img
                     src={profile.avatar.url}
@@ -272,9 +278,7 @@ function MyBookings() {
                 )}
               </div>
               <div>
-                <p className="font-medium text-navy text-sm">
-                  {profile?.name}
-                </p>
+                <p className="font-medium text-navy text-sm">{profile?.name}</p>
                 <p className="text-xs text-gray-400">{profile?.email}</p>
               </div>
             </div>
@@ -294,6 +298,7 @@ function MyBookings() {
                 Link to a publicly accessible image file
               </p>
             </div>
+
             {avatarError && (
               <p className="text-sm text-red-500 mb-4">{avatarError}</p>
             )}

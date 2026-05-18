@@ -15,7 +15,6 @@ export async function getVenues() {
     `${API_BASE}/venues?limit=100&page=1&sort=created&sortOrder=desc`
   )
   const data = await response.json()
-  console.log("Total venues from API:", data.meta)
   return data.data
 }
 
@@ -43,7 +42,6 @@ export async function createVenue(venueData) {
     body: JSON.stringify(venueData),
   })
   const data = await response.json()
-  console.log("Create venue response:", data)
   return data
 }
 
@@ -63,4 +61,12 @@ export async function deleteVenue(id) {
     headers: getHeaders(),
   })
   return response
+}
+
+export async function searchVenues(query) {
+  const response = await fetch(
+    `${API_BASE}/venues/search?q=${query}`
+  )
+  const data = await response.json()
+  return data.data
 }
