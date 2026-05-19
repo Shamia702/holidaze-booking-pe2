@@ -124,9 +124,9 @@ function VenueDetail() {
           <span className="text-coral">{venue.name}</span>
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12">
 
-          <div className="md:col-span-2 flex flex-col gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-6">
 
             <div>
               <h1 className="font-serif text-2xl md:text-4xl text-navy mb-3">
@@ -278,7 +278,7 @@ function VenueDetail() {
           </div>
 
           <div>
-            <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 md:sticky md:top-6">
+            <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 lg:sticky lg:top-6">
 
               <div className="flex items-baseline gap-2 mb-5 md:mb-6">
                 <span className="font-serif text-2xl md:text-3xl text-coral">
