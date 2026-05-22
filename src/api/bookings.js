@@ -19,3 +19,11 @@ export async function createBooking(bookingData) {
   const data = await response.json()
   return data
 }
+
+export async function deleteBooking(id) {
+  const response = await fetch (`${API_BASE}/bookings/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+    })
+    return response
+}

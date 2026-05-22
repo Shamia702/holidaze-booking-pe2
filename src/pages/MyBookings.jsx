@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { getProfileBookings, updateAvatar } from "../api/profiles"
+import { deleteBooking } from "../api/bookings"
 
 function MyBookings() {
   const navigate = useNavigate()
@@ -9,6 +10,9 @@ function MyBookings() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("upcoming")
   const [showAvatarModal, setShowAvatarModal] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [cancellingBooking, setCancellingBooking] = useState(null)
+  const [cancelLoading, setCancelLoading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState("")
   const [avatarLoading, setAvatarLoading] = useState(false)
   const [avatarError, setAvatarError] = useState("")
@@ -52,6 +56,19 @@ function MyBookings() {
     setAvatarLoading(false)
   }
 
+  async function handleCancelBooking() {
+    setCancelLoading(true)
+    try {
+      await deleteBooking(cancellingBooking.id)
+      await fetchBookings()
+      setShowCancelModal(false)
+      setCancellingBooking(null)
+    } catch (error) {
+      console.error("Error cancelling booking:", error)
+    }
+    setCancelLoading(false)
+  }
+
   const today = new Date()
 
   const upcomingBookings = bookings.filter(
@@ -84,57 +101,53 @@ function MyBookings() {
       <div className="px-4 md:px-10 py-6 md:py-8">
 
         <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
-  <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl md:text-2xl overflow-hidden">
+                {profile?.avatar?.url ? (
+                  <img
+                    src={profile.avatar.url}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  profile?.name?.charAt(0).toUpperCase()
+                )}
+              </div>
+              <button
+                onClick={() => setShowAvatarModal(true)}
+                className="absolute -bottom-1 -right-1 w-5 h-5 bg-coral text-white rounded-full flex items-center justify-center text-xs"
+              >
+                ✏
+              </button>
+            </div>
 
-    <div className="relative flex-shrink-0">
-      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl md:text-2xl overflow-hidden">
-        {profile?.avatar?.url ? (
-          <img
-            src={profile.avatar.url}
-            alt={profile.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          profile?.name?.charAt(0).toUpperCase()
-        )}
-      </div>
-      <button
-        onClick={() => setShowAvatarModal(true)}
-        className="absolute -bottom-1 -right-1 w-5 h-5 bg-coral text-white rounded-full flex items-center justify-center text-xs"
-      >
-        ✏
-      </button>
-    </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-base md:text-xl font-medium text-navy truncate">
+                {profile?.name}
+              </h1>
+              <p className="text-xs text-gray-400 truncate">
+                {profile?.email}
+              </p>
+              <p className="text-xs text-gray-400">Customer</p>
+            </div>
 
-    <div className="flex-1 min-w-0">
-      <h1 className="text-base md:text-xl font-medium text-navy truncate">
-        {profile?.name}
-      </h1>
-      <p className="text-xs text-gray-400 truncate">
-        {profile?.email}
-      </p>
-      <p className="text-xs text-gray-400">
-        Customer
-      </p>
-    </div>
+            <button
+              onClick={() => setShowAvatarModal(true)}
+              className="hidden md:block px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0"
+            >
+              Edit profile
+            </button>
+          </div>
 
-    <button
-      onClick={() => setShowAvatarModal(true)}
-      className="hidden md:block px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0"
-    >
-      Edit profile
-    </button>
+          <button
+            onClick={() => setShowAvatarModal(true)}
+            className="md:hidden mt-3 w-full py-2 text-xs font-medium text-coral border border-coral rounded-lg"
+          >
+            Edit profile
+          </button>
+        </div>
 
-  </div>
-
-  <button
-    onClick={() => setShowAvatarModal(true)}
-    className="md:hidden mt-3 w-full py-2 text-xs font-medium text-coral border border-coral rounded-lg"
-  >
-    Edit profile
-  </button>
-
-</div>
         <div className="flex gap-2 mb-6 flex-wrap">
           {["upcoming", "past", "all"].map((tab) => (
             <button
@@ -228,15 +241,28 @@ function MyBookings() {
                           ? `${booking.venue.price * nights} kr total`
                           : ""}
                       </span>
-                      <span
-                        className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full
-                          ${isUpcoming
-                            ? "bg-blue-50 text-blue-600"
-                            : "bg-gray-100 text-gray-500"
-                          }`}
-                      >
-                        {isUpcoming ? "Upcoming" : "Completed"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full
+                            ${isUpcoming
+                              ? "bg-blue-50 text-blue-600"
+                              : "bg-gray-100 text-gray-500"
+                            }`}
+                        >
+                          {isUpcoming ? "Upcoming" : "Completed"}
+                        </span>
+                        {isUpcoming && (
+                          <button
+                            onClick={() => {
+                              setCancellingBooking(booking)
+                              setShowCancelModal(true)
+                            }}
+                            className="text-xs font-medium text-red-500 border border-red-200 rounded-lg px-3 py-1 hover:bg-red-50 transition-colors"
+                          >
+                            Cancel booking
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -246,6 +272,43 @@ function MyBookings() {
         )}
 
       </div>
+
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm text-center">
+            <p className="text-4xl mb-4">🗑️</p>
+            <h3 className="font-serif text-xl text-navy mb-2">
+              Cancel this booking?
+            </h3>
+            <p className="text-sm text-gray-500 mb-2">
+              <span className="font-medium text-navy">
+                {cancellingBooking?.venue?.name}
+              </span>
+            </p>
+            <p className="text-xs text-gray-400 mb-6">
+              This cannot be undone
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCancelModal(false)
+                  setCancellingBooking(null)
+                }}
+                className="flex-1 py-2.5 border border-warmgray rounded-lg text-sm text-gray-500 hover:border-coral hover:text-coral transition-colors"
+              >
+                Keep it
+              </button>
+              <button
+                onClick={handleCancelBooking}
+                disabled={cancelLoading}
+                className="flex-1 py-2.5 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-colors disabled:opacity-60"
+              >
+                {cancelLoading ? "Cancelling..." : "Yes, cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAvatarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
