@@ -1,13 +1,11 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 function NotFound() {
   return (
     <div className="min-h-screen bg-sand flex items-center justify-center">
       <div className="text-center">
         <p className="font-serif text-8xl text-coral mb-4">404</p>
-        <h1 className="text-2xl font-medium text-navy mb-3">
-          Page not found
-        </h1>
+        <h1 className="text-2xl font-medium text-navy mb-3">Page not found</h1>
         <p className="text-sm text-gray-500 mb-8">
           The page you are looking for does not exist or has been moved.
         </p>
@@ -19,7 +17,7 @@ function NotFound() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
-export default NotFound
+export default NotFound;

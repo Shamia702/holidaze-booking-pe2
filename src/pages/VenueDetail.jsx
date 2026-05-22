@@ -1,40 +1,40 @@
-import { useState, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
-import { getVenueById } from "../api/venues"
-import { createBooking } from "../api/bookings"
-import Calendar from "../components/Calendar"
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { getVenueById } from "../api/venues";
+import { createBooking } from "../api/bookings";
+import Calendar from "../components/Calendar";
 
 function VenueDetail() {
-  const { id } = useParams()
-  const [venue, setVenue] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [selectedDates, setSelectedDates] = useState(null)
-  const [bookingLoading, setBookingLoading] = useState(false)
-  const [bookingSuccess, setBookingSuccess] = useState(false)
-  const [bookingError, setBookingError] = useState("")
+  const { id } = useParams();
+  const [venue, setVenue] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedDates, setSelectedDates] = useState(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingError, setBookingError] = useState("");
 
-  const profile = JSON.parse(localStorage.getItem("profile") || "null")
-  const isLoggedIn = !!localStorage.getItem("token")
-  const isManager = profile?.venueManager
+  const profile = JSON.parse(localStorage.getItem("profile") || "null");
+  const isLoggedIn = !!localStorage.getItem("token");
+  const isManager = profile?.venueManager;
 
   useEffect(() => {
     async function fetchVenue() {
       try {
-        const data = await getVenueById(id)
-        setVenue(data)
-        setLoading(false)
+        const data = await getVenueById(id);
+        setVenue(data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching venue:", error)
-        setLoading(false)
+        console.error("Error fetching venue:", error);
+        setLoading(false);
       }
     }
-    fetchVenue()
-  }, [id])
+    fetchVenue();
+  }, [id]);
 
   async function handleBooking() {
-    if (!selectedDates) return
-    setBookingLoading(true)
-    setBookingError("")
+    if (!selectedDates) return;
+    setBookingLoading(true);
+    setBookingError("");
 
     try {
       const result = await createBooking({
@@ -42,20 +42,20 @@ function VenueDetail() {
         dateTo: selectedDates.checkOut.toISOString(),
         guests: 1,
         venueId: id,
-      })
+      });
 
       if (result.errors) {
-        setBookingError(result.errors[0].message)
-        setBookingLoading(false)
-        return
+        setBookingError(result.errors[0].message);
+        setBookingLoading(false);
+        return;
       }
 
-      setBookingSuccess(true)
+      setBookingSuccess(true);
     } catch (error) {
-      setBookingError("Something went wrong. Please try again.")
+      setBookingError("Something went wrong. Please try again.");
     }
 
-    setBookingLoading(false)
+    setBookingLoading(false);
   }
 
   if (loading) {
@@ -66,7 +66,7 @@ function VenueDetail() {
           <p className="text-gray-500">Loading venue...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!venue) {
@@ -80,12 +80,11 @@ function VenueDetail() {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="bg-sand min-h-screen">
-
       <div className="h-48 md:h-96 overflow-hidden relative">
         {venue.media && venue.media.length > 0 ? (
           <img
@@ -111,7 +110,6 @@ function VenueDetail() {
       </div>
 
       <div className="px-4 md:px-10 py-6 md:py-8">
-
         <p className="text-sm text-gray-400 mb-4 md:mb-6">
           <Link to="/" className="hover:text-coral transition-colors">
             Home
@@ -125,9 +123,7 @@ function VenueDetail() {
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12">
-
           <div className="lg:col-span-2 flex flex-col gap-6">
-
             <div>
               <h1 className="font-serif text-2xl md:text-4xl text-navy mb-3">
                 {venue.name}
@@ -216,9 +212,7 @@ function VenueDetail() {
                   <p className="font-medium text-navy text-sm truncate">
                     {venue.owner?.name || "Host"}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Venue Manager
-                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">Venue Manager</p>
                 </div>
                 <button className="px-3 md:px-4 py-2 text-xs font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0">
                   Contact
@@ -268,18 +262,16 @@ function VenueDetail() {
                     Guest satisfaction
                   </p>
                   <p className="text-xs md:text-sm text-gray-400 leading-relaxed">
-                    This venue has been rated {venue.rating} out of 5 by
-                    guests who have stayed here.
+                    This venue has been rated {venue.rating} out of 5 by guests
+                    who have stayed here.
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
 
           <div>
             <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 lg:sticky lg:top-6">
-
               <div className="flex items-baseline gap-2 mb-5 md:mb-6">
                 <span className="font-serif text-2xl md:text-3xl text-coral">
                   {venue.price} kr
@@ -332,7 +324,9 @@ function VenueDetail() {
                       <>
                         {bookingError && (
                           <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
-                            <p className="text-sm text-red-600">{bookingError}</p>
+                            <p className="text-sm text-red-600">
+                              {bookingError}
+                            </p>
                           </div>
                         )}
                         <button
@@ -343,8 +337,8 @@ function VenueDetail() {
                           {bookingLoading
                             ? "Confirming..."
                             : !selectedDates
-                            ? "Select dates to book"
-                            : "Confirm booking"}
+                              ? "Select dates to book"
+                              : "Confirm booking"}
                         </button>
                         <p className="text-xs text-gray-400 text-center mt-2">
                           You won't be charged yet
@@ -377,14 +371,12 @@ function VenueDetail() {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
-
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default VenueDetail
+export default VenueDetail;

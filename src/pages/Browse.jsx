@@ -1,66 +1,64 @@
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { getVenues, searchVenues } from "../api/venues"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getVenues, searchVenues } from "../api/venues";
 
 function Browse() {
-  const [venues, setVenues] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const venuesPerPage = 12
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const venuesPerPage = 12;
 
   useEffect(() => {
-    fetchAllVenues()
-  }, [])
+    fetchAllVenues();
+  }, []);
 
   async function fetchAllVenues() {
     try {
-      setLoading(true)
-      const data = await getVenues()
-      setVenues(data)
-      setLoading(false)
+      setLoading(true);
+      const data = await getVenues();
+      setVenues(data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching venues:", error)
-      setLoading(false)
+      console.error("Error fetching venues:", error);
+      setLoading(false);
     }
   }
 
   async function handleSearch(e) {
-    const query = e.target.value
-    setSearch(query)
-    setCurrentPage(1)
+    const query = e.target.value;
+    setSearch(query);
+    setCurrentPage(1);
 
     if (query.length === 0) {
-      fetchAllVenues()
-      return
+      fetchAllVenues();
+      return;
     }
 
     if (query.length > 2) {
       try {
-        setLoading(true)
-        const data = await searchVenues(query)
-        setVenues(data || [])
-        setLoading(false)
+        setLoading(true);
+        const data = await searchVenues(query);
+        setVenues(data || []);
+        setLoading(false);
       } catch (error) {
-        console.error("Search error:", error)
-        setLoading(false)
+        console.error("Search error:", error);
+        setLoading(false);
       }
     }
   }
 
-  const totalPages = Math.ceil(venues.length / venuesPerPage)
+  const totalPages = Math.ceil(venues.length / venuesPerPage);
 
   const paginatedVenues = venues.slice(
     (currentPage - 1) * venuesPerPage,
-    currentPage * venuesPerPage
-  )
+    currentPage * venuesPerPage,
+  );
 
   return (
     <div className="bg-sand min-h-screen w-full overflow-x-hidden">
-
       <div className="bg-navy px-4 md:px-10 py-10 md:py-12 w-full overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-
           <div className="w-full md:w-auto">
             <h1 className="font-serif text-3xl md:text-4xl text-white mb-3">
               Find your perfect stay
@@ -98,16 +96,12 @@ function Browse() {
               <div className="text-xs text-white/45">Secure booking</div>
             </div>
           </div>
-
         </div>
       </div>
 
       <div className="px-4 md:px-10 py-6">
-
         <div className="flex justify-between items-center mb-4">
-          <p className="text-sm text-gray-500">
-            {venues.length} venues found
-          </p>
+          <p className="text-sm text-gray-500">{venues.length} venues found</p>
         </div>
 
         {loading && (
@@ -130,8 +124,8 @@ function Browse() {
             </p>
             <button
               onClick={() => {
-                setSearch("")
-                fetchAllVenues()
+                setSearch("");
+                fetchAllVenues();
               }}
               className="bg-coral text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-colors"
             >
@@ -201,7 +195,8 @@ function Browse() {
                     <span className="text-coral font-medium text-sm">
                       {venue.price} kr
                       <span className="text-gray-400 font-normal text-xs">
-                        {" "}/night
+                        {" "}
+                        /night
                       </span>
                     </span>
                     <span className="text-xs text-gray-400">
@@ -228,16 +223,19 @@ function Browse() {
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
                 className={`w-8 h-8 md:w-9 md:h-9 text-xs md:text-sm rounded-lg border transition-colors
-                  ${currentPage === i + 1
-                    ? "bg-coral text-white border-coral"
-                    : "border-warmgray text-gray-500 hover:border-coral hover:text-coral"
+                  ${
+                    currentPage === i + 1
+                      ? "bg-coral text-white border-coral"
+                      : "border-warmgray text-gray-500 hover:border-coral hover:text-coral"
                   }`}
               >
                 {i + 1}
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="px-3 md:px-4 py-2 text-xs md:text-sm border border-warmgray rounded-lg text-gray-500 hover:border-coral hover:text-coral disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
@@ -245,10 +243,9 @@ function Browse() {
             </button>
           </div>
         )}
-
       </div>
     </div>
-  )
+  );
 }
 
-export default Browse
+export default Browse;

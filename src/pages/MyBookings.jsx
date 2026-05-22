@@ -1,89 +1,85 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { getProfileBookings, updateAvatar } from "../api/profiles"
-import { deleteBooking } from "../api/bookings"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getProfileBookings, updateAvatar } from "../api/profiles";
+import { deleteBooking } from "../api/bookings";
 
 function MyBookings() {
-  const navigate = useNavigate()
-  const profile = JSON.parse(localStorage.getItem("profile") || "null")
-  const [bookings, setBookings] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("upcoming")
-  const [showAvatarModal, setShowAvatarModal] = useState(false)
-  const [showCancelModal, setShowCancelModal] = useState(false)
-  const [cancellingBooking, setCancellingBooking] = useState(null)
-  const [cancelLoading, setCancelLoading] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState("")
-  const [avatarLoading, setAvatarLoading] = useState(false)
-  const [avatarError, setAvatarError] = useState("")
+  const navigate = useNavigate();
+  const profile = JSON.parse(localStorage.getItem("profile") || "null");
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("upcoming");
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancellingBooking, setCancellingBooking] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
 
   useEffect(() => {
     if (!profile) {
-      navigate("/login")
-      return
+      navigate("/login");
+      return;
     }
-    fetchBookings()
-  }, [])
+    fetchBookings();
+  }, []);
 
   async function fetchBookings() {
     try {
-      const data = await getProfileBookings(profile.name)
-      setBookings(data)
-      setLoading(false)
+      const data = await getProfileBookings(profile.name);
+      setBookings(data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching bookings:", error)
-      setLoading(false)
+      console.error("Error fetching bookings:", error);
+      setLoading(false);
     }
   }
 
   async function handleAvatarUpdate() {
-    setAvatarError("")
+    setAvatarError("");
     if (!avatarUrl) {
-      setAvatarError("Please enter an image URL")
-      return
+      setAvatarError("Please enter an image URL");
+      return;
     }
-    setAvatarLoading(true)
+    setAvatarLoading(true);
     try {
-      const data = await updateAvatar(profile.name, avatarUrl)
-      const updatedProfile = { ...profile, avatar: data.avatar }
-      localStorage.setItem("profile", JSON.stringify(updatedProfile))
-      setShowAvatarModal(false)
-      setAvatarUrl("")
-      window.location.reload()
+      const data = await updateAvatar(profile.name, avatarUrl);
+      const updatedProfile = { ...profile, avatar: data.avatar };
+      localStorage.setItem("profile", JSON.stringify(updatedProfile));
+      setShowAvatarModal(false);
+      setAvatarUrl("");
+      window.location.reload();
     } catch (error) {
-      setAvatarError("Failed to update avatar. Please try again.")
+      setAvatarError("Failed to update avatar. Please try again.");
     }
-    setAvatarLoading(false)
+    setAvatarLoading(false);
   }
 
   async function handleCancelBooking() {
-    setCancelLoading(true)
+    setCancelLoading(true);
     try {
-      await deleteBooking(cancellingBooking.id)
-      await fetchBookings()
-      setShowCancelModal(false)
-      setCancellingBooking(null)
+      await deleteBooking(cancellingBooking.id);
+      await fetchBookings();
+      setShowCancelModal(false);
+      setCancellingBooking(null);
     } catch (error) {
-      console.error("Error cancelling booking:", error)
+      console.error("Error cancelling booking:", error);
     }
-    setCancelLoading(false)
+    setCancelLoading(false);
   }
 
-  const today = new Date()
+  const today = new Date();
 
-  const upcomingBookings = bookings.filter(
-    (b) => new Date(b.dateTo) >= today
-  )
-  const pastBookings = bookings.filter(
-    (b) => new Date(b.dateTo) < today
-  )
+  const upcomingBookings = bookings.filter((b) => new Date(b.dateTo) >= today);
+  const pastBookings = bookings.filter((b) => new Date(b.dateTo) < today);
 
   const displayedBookings =
     activeTab === "upcoming"
       ? upcomingBookings
       : activeTab === "past"
-      ? pastBookings
-      : bookings
+        ? pastBookings
+        : bookings;
 
   if (loading) {
     return (
@@ -93,13 +89,12 @@ function MyBookings() {
           <p className="text-gray-500">Loading your bookings...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="bg-sand min-h-screen">
       <div className="px-4 md:px-10 py-6 md:py-8">
-
         <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
           <div className="flex items-center gap-3 md:gap-5">
             <div className="relative flex-shrink-0">
@@ -126,9 +121,7 @@ function MyBookings() {
               <h1 className="text-base md:text-xl font-medium text-navy truncate">
                 {profile?.name}
               </h1>
-              <p className="text-xs text-gray-400 truncate">
-                {profile?.email}
-              </p>
+              <p className="text-xs text-gray-400 truncate">{profile?.email}</p>
               <p className="text-xs text-gray-400">Customer</p>
             </div>
 
@@ -154,16 +147,17 @@ function MyBookings() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors capitalize
-                ${activeTab === tab
-                  ? "bg-coral text-white"
-                  : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
+                ${
+                  activeTab === tab
+                    ? "bg-coral text-white"
+                    : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
                 }`}
             >
               {tab === "upcoming"
                 ? `Upcoming (${upcomingBookings.length})`
                 : tab === "past"
-                ? `Past (${pastBookings.length})`
-                : `All (${bookings.length})`}
+                  ? `Past (${pastBookings.length})`
+                  : `All (${bookings.length})`}
             </button>
           ))}
         </div>
@@ -178,8 +172,8 @@ function MyBookings() {
               {activeTab === "upcoming"
                 ? "You have no upcoming bookings"
                 : activeTab === "past"
-                ? "You have no past bookings"
-                : "You have not made any bookings yet"}
+                  ? "You have no past bookings"
+                  : "You have not made any bookings yet"}
             </p>
             <a
               href="/"
@@ -191,11 +185,11 @@ function MyBookings() {
         ) : (
           <div className="flex flex-col gap-4">
             {displayedBookings.map((booking) => {
-              const isUpcoming = new Date(booking.dateTo) >= today
+              const isUpcoming = new Date(booking.dateTo) >= today;
               const nights = Math.ceil(
                 (new Date(booking.dateTo) - new Date(booking.dateFrom)) /
-                  (1000 * 60 * 60 * 24)
-              )
+                  (1000 * 60 * 60 * 24),
+              );
               return (
                 <div
                   key={booking.id}
@@ -244,9 +238,10 @@ function MyBookings() {
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full
-                            ${isUpcoming
-                              ? "bg-blue-50 text-blue-600"
-                              : "bg-gray-100 text-gray-500"
+                            ${
+                              isUpcoming
+                                ? "bg-blue-50 text-blue-600"
+                                : "bg-gray-100 text-gray-500"
                             }`}
                         >
                           {isUpcoming ? "Upcoming" : "Completed"}
@@ -254,8 +249,8 @@ function MyBookings() {
                         {isUpcoming && (
                           <button
                             onClick={() => {
-                              setCancellingBooking(booking)
-                              setShowCancelModal(true)
+                              setCancellingBooking(booking);
+                              setShowCancelModal(true);
                             }}
                             className="text-xs font-medium text-red-500 border border-red-200 rounded-lg px-3 py-1 hover:bg-red-50 transition-colors"
                           >
@@ -266,11 +261,10 @@ function MyBookings() {
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}
-
       </div>
 
       {showCancelModal && (
@@ -285,14 +279,12 @@ function MyBookings() {
                 {cancellingBooking?.venue?.name}
               </span>
             </p>
-            <p className="text-xs text-gray-400 mb-6">
-              This cannot be undone
-            </p>
+            <p className="text-xs text-gray-400 mb-6">This cannot be undone</p>
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setShowCancelModal(false)
-                  setCancellingBooking(null)
+                  setShowCancelModal(false);
+                  setCancellingBooking(null);
                 }}
                 className="flex-1 py-2.5 border border-warmgray rounded-lg text-sm text-gray-500 hover:border-coral hover:text-coral transition-colors"
               >
@@ -313,14 +305,13 @@ function MyBookings() {
       {showAvatarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-5 md:p-6 w-full max-w-md">
-
             <div className="flex justify-between items-center mb-5">
               <h3 className="font-serif text-xl text-navy">Edit profile</h3>
               <button
                 onClick={() => {
-                  setShowAvatarModal(false)
-                  setAvatarError("")
-                  setAvatarUrl("")
+                  setShowAvatarModal(false);
+                  setAvatarError("");
+                  setAvatarUrl("");
                 }}
                 className="text-gray-400 hover:text-navy text-xl"
               >
@@ -369,9 +360,9 @@ function MyBookings() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setShowAvatarModal(false)
-                  setAvatarError("")
-                  setAvatarUrl("")
+                  setShowAvatarModal(false);
+                  setAvatarError("");
+                  setAvatarUrl("");
                 }}
                 className="flex-1 py-2.5 border border-warmgray rounded-lg text-sm text-gray-500 hover:border-coral hover:text-coral transition-colors"
               >
@@ -385,13 +376,11 @@ function MyBookings() {
                 {avatarLoading ? "Saving..." : "Save changes"}
               </button>
             </div>
-
           </div>
         </div>
       )}
-
     </div>
-  )
+  );
 }
 
-export default MyBookings
+export default MyBookings;

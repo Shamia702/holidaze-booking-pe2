@@ -1,16 +1,16 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
-import Browse from "./pages/Browse"
-import VenueDetail from "./pages/VenueDetail"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import MyBookings from "./pages/MyBookings"
-import ManagerDashboard from "./pages/ManagerDashboard"
-import NotFound from "./pages/NotFound"
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Browse from "./pages/Browse";
+import VenueDetail from "./pages/VenueDetail";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import MyBookings from "./pages/MyBookings";
+import ManagerDashboard from "./pages/ManagerDashboard";
+import NotFound from "./pages/NotFound";
 
 function Layout() {
-  const location = useLocation()
+  const location = useLocation();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -28,7 +28,7 @@ function Layout() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
     <BrowserRouter>
       <Layout />
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

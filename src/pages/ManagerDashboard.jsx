@@ -1,29 +1,29 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getManagerVenues,
   createVenue,
   updateVenue,
   deleteVenue,
-} from "../api/venues"
-import { updateAvatar } from "../api/profiles"
+} from "../api/venues";
+import { updateAvatar } from "../api/profiles";
 
 function ManagerDashboard() {
-  const navigate = useNavigate()
-  const profile = JSON.parse(localStorage.getItem("profile") || "null")
-  const [venues, setVenues] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("venues")
-  const [showModal, setShowModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showAvatarModal, setShowAvatarModal] = useState(false)
-  const [editingVenue, setEditingVenue] = useState(null)
-  const [deletingVenue, setDeletingVenue] = useState(null)
-  const [formError, setFormError] = useState("")
-  const [formLoading, setFormLoading] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState("")
-  const [avatarLoading, setAvatarLoading] = useState(false)
-  const [avatarError, setAvatarError] = useState("")
+  const navigate = useNavigate();
+  const profile = JSON.parse(localStorage.getItem("profile") || "null");
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("venues");
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [editingVenue, setEditingVenue] = useState(null);
+  const [deletingVenue, setDeletingVenue] = useState(null);
+  const [formError, setFormError] = useState("");
+  const [formLoading, setFormLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -34,49 +34,49 @@ function ManagerDashboard() {
     parking: false,
     breakfast: false,
     pets: false,
-  })
+  });
 
   useEffect(() => {
     if (!profile || !profile.venueManager) {
-      navigate("/")
-      return
+      navigate("/");
+      return;
     }
-    fetchVenues()
-  }, [])
+    fetchVenues();
+  }, []);
 
   async function fetchVenues() {
     try {
-      const data = await getManagerVenues(profile.name)
-      setVenues(data)
-      setLoading(false)
+      const data = await getManagerVenues(profile.name);
+      setVenues(data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching venues:", error)
-      setLoading(false)
+      console.error("Error fetching venues:", error);
+      setLoading(false);
     }
   }
 
   async function handleAvatarUpdate() {
-    setAvatarError("")
+    setAvatarError("");
     if (!avatarUrl) {
-      setAvatarError("Please enter an image URL")
-      return
+      setAvatarError("Please enter an image URL");
+      return;
     }
-    setAvatarLoading(true)
+    setAvatarLoading(true);
     try {
-      const data = await updateAvatar(profile.name, avatarUrl)
-      const updatedProfile = { ...profile, avatar: data.avatar }
-      localStorage.setItem("profile", JSON.stringify(updatedProfile))
-      setShowAvatarModal(false)
-      setAvatarUrl("")
-      window.location.reload()
+      const data = await updateAvatar(profile.name, avatarUrl);
+      const updatedProfile = { ...profile, avatar: data.avatar };
+      localStorage.setItem("profile", JSON.stringify(updatedProfile));
+      setShowAvatarModal(false);
+      setAvatarUrl("");
+      window.location.reload();
     } catch (error) {
-      setAvatarError("Failed to update avatar. Please try again.")
+      setAvatarError("Failed to update avatar. Please try again.");
     }
-    setAvatarLoading(false)
+    setAvatarLoading(false);
   }
 
   function openAddModal() {
-    setEditingVenue(null)
+    setEditingVenue(null);
     setFormData({
       name: "",
       description: "",
@@ -87,13 +87,13 @@ function ManagerDashboard() {
       parking: false,
       breakfast: false,
       pets: false,
-    })
-    setFormError("")
-    setShowModal(true)
+    });
+    setFormError("");
+    setShowModal(true);
   }
 
   function openEditModal(venue) {
-    setEditingVenue(venue)
+    setEditingVenue(venue);
     setFormData({
       name: venue.name || "",
       description: venue.description || "",
@@ -104,42 +104,42 @@ function ManagerDashboard() {
       parking: venue.meta?.parking || false,
       breakfast: venue.meta?.breakfast || false,
       pets: venue.meta?.pets || false,
-    })
-    setFormError("")
-    setShowModal(true)
+    });
+    setFormError("");
+    setShowModal(true);
   }
 
   function openDeleteModal(venue) {
-    setDeletingVenue(venue)
-    setShowDeleteModal(true)
+    setDeletingVenue(venue);
+    setShowDeleteModal(true);
   }
 
   function handleFormChange(e) {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
-    }))
+    }));
   }
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setFormError("")
+    e.preventDefault();
+    setFormError("");
 
     if (!formData.name) {
-      setFormError("Venue name is required")
-      return
+      setFormError("Venue name is required");
+      return;
     }
     if (!formData.price || formData.price <= 0) {
-      setFormError("Price must be greater than 0")
-      return
+      setFormError("Price must be greater than 0");
+      return;
     }
     if (!formData.maxGuests || formData.maxGuests <= 0) {
-      setFormError("Max guests must be greater than 0")
-      return
+      setFormError("Max guests must be greater than 0");
+      return;
     }
 
-    setFormLoading(true)
+    setFormLoading(true);
 
     const payload = {
       name: formData.name,
@@ -152,45 +152,45 @@ function ManagerDashboard() {
         breakfast: formData.breakfast,
         pets: formData.pets,
       },
-    }
+    };
 
     if (formData.image) {
-      payload.media = [{ url: formData.image, alt: formData.name }]
+      payload.media = [{ url: formData.image, alt: formData.name }];
     }
 
     try {
       if (editingVenue) {
-        const result = await updateVenue(editingVenue.id, payload)
+        const result = await updateVenue(editingVenue.id, payload);
         if (result.errors) {
-          setFormError(result.errors[0].message)
-          setFormLoading(false)
-          return
+          setFormError(result.errors[0].message);
+          setFormLoading(false);
+          return;
         }
       } else {
-        const result = await createVenue(payload)
+        const result = await createVenue(payload);
         if (result.errors) {
-          setFormError(result.errors[0].message)
-          setFormLoading(false)
-          return
+          setFormError(result.errors[0].message);
+          setFormLoading(false);
+          return;
         }
       }
-      await fetchVenues()
-      setShowModal(false)
+      await fetchVenues();
+      setShowModal(false);
     } catch (error) {
-      setFormError("Something went wrong. Please try again.")
+      setFormError("Something went wrong. Please try again.");
     }
 
-    setFormLoading(false)
+    setFormLoading(false);
   }
 
   async function handleDelete() {
     try {
-      await deleteVenue(deletingVenue.id)
-      await fetchVenues()
-      setShowDeleteModal(false)
-      setDeletingVenue(null)
+      await deleteVenue(deletingVenue.id);
+      await fetchVenues();
+      setShowDeleteModal(false);
+      setDeletingVenue(null);
     } catch (error) {
-      console.error("Error deleting venue:", error)
+      console.error("Error deleting venue:", error);
     }
   }
 
@@ -198,12 +198,12 @@ function ManagerDashboard() {
     (venue.bookings || []).map((booking) => ({
       ...booking,
       venueName: venue.name,
-    }))
-  )
+    })),
+  );
 
   const upcomingBookings = allBookings.filter(
-    (b) => new Date(b.dateTo) >= new Date()
-  )
+    (b) => new Date(b.dateTo) >= new Date(),
+  );
 
   if (loading) {
     return (
@@ -213,64 +213,57 @@ function ManagerDashboard() {
           <p className="text-gray-500">Loading dashboard...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="bg-sand min-h-screen">
       <div className="px-4 md:px-10 py-6 md:py-8">
-<div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
-  <div className="flex items-center gap-3 md:gap-5">
+        <div className="bg-white border border-warmgray rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl overflow-hidden">
+                {profile?.avatar?.url ? (
+                  <img
+                    src={profile.avatar.url}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  profile?.name?.charAt(0).toUpperCase()
+                )}
+              </div>
+              <button
+                onClick={() => setShowAvatarModal(true)}
+                className="absolute -bottom-1 -right-1 w-5 h-5 bg-coral text-white rounded-full flex items-center justify-center text-xs"
+              >
+                ✏
+              </button>
+            </div>
 
-    <div className="relative flex-shrink-0">
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-xl overflow-hidden">
-        {profile?.avatar?.url ? (
-          <img
-            src={profile.avatar.url}
-            alt={profile.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          profile?.name?.charAt(0).toUpperCase()
-        )}
-      </div>
-      <button
-        onClick={() => setShowAvatarModal(true)}
-        className="absolute -bottom-1 -right-1 w-5 h-5 bg-coral text-white rounded-full flex items-center justify-center text-xs"
-      >
-        ✏
-      </button>
-    </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-base md:text-xl font-medium text-navy truncate">
+                {profile?.name}
+              </h1>
+              <p className="text-xs text-gray-400 truncate">{profile?.email}</p>
+              <p className="text-xs text-gray-400">Venue Manager</p>
+            </div>
 
-    <div className="flex-1 min-w-0">
-      <h1 className="text-base md:text-xl font-medium text-navy truncate">
-        {profile?.name}
-      </h1>
-      <p className="text-xs text-gray-400 truncate">
-        {profile?.email}
-      </p>
-      <p className="text-xs text-gray-400">
-        Venue Manager
-      </p>
-    </div>
+            <button
+              onClick={() => setShowAvatarModal(true)}
+              className="hidden md:block px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0"
+            >
+              Edit profile
+            </button>
+          </div>
 
-    <button
-      onClick={() => setShowAvatarModal(true)}
-      className="hidden md:block px-4 py-2 text-sm font-medium text-coral border border-coral rounded-lg hover:bg-coral hover:text-white transition-colors flex-shrink-0"
-    >
-      Edit profile
-    </button>
-
-  </div>
-
-  <button
-    onClick={() => setShowAvatarModal(true)}
-    className="md:hidden mt-3 w-full py-2 text-xs font-medium text-coral border border-coral rounded-lg"
-  >
-    Edit profile
-  </button>
-
-</div>
+          <button
+            onClick={() => setShowAvatarModal(true)}
+            className="md:hidden mt-3 w-full py-2 text-xs font-medium text-coral border border-coral rounded-lg"
+          >
+            Edit profile
+          </button>
+        </div>
 
         <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
           <div className="bg-white border border-warmgray rounded-2xl p-3 md:p-5">
@@ -303,9 +296,10 @@ function ManagerDashboard() {
           <button
             onClick={() => setActiveTab("venues")}
             className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors
-              ${activeTab === "venues"
-                ? "bg-coral text-white"
-                : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
+              ${
+                activeTab === "venues"
+                  ? "bg-coral text-white"
+                  : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
               }`}
           >
             My venues ({venues.length})
@@ -313,9 +307,10 @@ function ManagerDashboard() {
           <button
             onClick={() => setActiveTab("bookings")}
             className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors
-              ${activeTab === "bookings"
-                ? "bg-coral text-white"
-                : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
+              ${
+                activeTab === "bookings"
+                  ? "bg-coral text-white"
+                  : "bg-white border border-warmgray text-gray-500 hover:border-coral hover:text-coral"
               }`}
           >
             Bookings ({allBookings.length})
@@ -368,7 +363,9 @@ function ManagerDashboard() {
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-400 text-xs">No image</span>
+                          <span className="text-gray-400 text-xs">
+                            No image
+                          </span>
                         </div>
                       )}
                     </div>
@@ -469,7 +466,7 @@ function ManagerDashboard() {
                   </thead>
                   <tbody>
                     {allBookings.map((booking) => {
-                      const isUpcoming = new Date(booking.dateTo) >= new Date()
+                      const isUpcoming = new Date(booking.dateTo) >= new Date();
                       return (
                         <tr
                           key={booking.id}
@@ -482,17 +479,23 @@ function ManagerDashboard() {
                             {booking.venueName}
                           </td>
                           <td className="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-500">
-                            {new Date(booking.dateFrom).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
+                            {new Date(booking.dateFrom).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
                             {" → "}
-                            {new Date(booking.dateTo).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
+                            {new Date(booking.dateTo).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
                           </td>
                           <td className="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-500">
                             {booking.guests}
@@ -500,16 +503,17 @@ function ManagerDashboard() {
                           <td className="px-4 md:px-6 py-3 md:py-4">
                             <span
                               className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full
-                                ${isUpcoming
-                                  ? "bg-blue-50 text-blue-600"
-                                  : "bg-gray-100 text-gray-500"
+                                ${
+                                  isUpcoming
+                                    ? "bg-blue-50 text-blue-600"
+                                    : "bg-gray-100 text-gray-500"
                                 }`}
                             >
                               {isUpcoming ? "Upcoming" : "Completed"}
                             </span>
                           </td>
                         </tr>
-                      )
+                      );
                     })}
                   </tbody>
                 </table>
@@ -517,13 +521,11 @@ function ManagerDashboard() {
             )}
           </div>
         )}
-
       </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
           <div className="bg-white rounded-2xl p-5 md:p-6 w-full max-w-lg my-auto">
-
             <div className="flex justify-between items-center mb-5">
               <h3 className="font-serif text-xl text-navy">
                 {editingVenue ? "Edit venue" : "Add new venue"}
@@ -639,10 +641,13 @@ function ManagerDashboard() {
                         className="accent-coral"
                       />
                       <span className="text-sm text-navy">
-                        {amenity === "wifi" ? "📶 WiFi" :
-                         amenity === "parking" ? "🅿️ Parking" :
-                         amenity === "breakfast" ? "🍳 Breakfast" :
-                         "🐾 Pets allowed"}
+                        {amenity === "wifi"
+                          ? "📶 WiFi"
+                          : amenity === "parking"
+                            ? "🅿️ Parking"
+                            : amenity === "breakfast"
+                              ? "🍳 Breakfast"
+                              : "🐾 Pets allowed"}
                       </span>
                     </label>
                   ))}
@@ -665,8 +670,8 @@ function ManagerDashboard() {
                   {formLoading
                     ? "Saving..."
                     : editingVenue
-                    ? "Save changes"
-                    : "Create venue"}
+                      ? "Save changes"
+                      : "Create venue"}
                 </button>
               </div>
             </form>
@@ -691,8 +696,8 @@ function ManagerDashboard() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setShowDeleteModal(false)
-                  setDeletingVenue(null)
+                  setShowDeleteModal(false);
+                  setDeletingVenue(null);
                 }}
                 className="flex-1 py-2.5 border border-warmgray rounded-lg text-sm text-gray-500 hover:border-coral hover:text-coral transition-colors"
               >
@@ -712,14 +717,13 @@ function ManagerDashboard() {
       {showAvatarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-5 md:p-6 w-full max-w-md">
-
             <div className="flex justify-between items-center mb-5">
               <h3 className="font-serif text-xl text-navy">Edit profile</h3>
               <button
                 onClick={() => {
-                  setShowAvatarModal(false)
-                  setAvatarError("")
-                  setAvatarUrl("")
+                  setShowAvatarModal(false);
+                  setAvatarError("");
+                  setAvatarUrl("");
                 }}
                 className="text-gray-400 hover:text-navy text-xl"
               >
@@ -768,9 +772,9 @@ function ManagerDashboard() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setShowAvatarModal(false)
-                  setAvatarError("")
-                  setAvatarUrl("")
+                  setShowAvatarModal(false);
+                  setAvatarError("");
+                  setAvatarUrl("");
                 }}
                 className="flex-1 py-2.5 border border-warmgray rounded-lg text-sm text-gray-500 hover:border-coral hover:text-coral transition-colors"
               >
@@ -784,13 +788,11 @@ function ManagerDashboard() {
                 {avatarLoading ? "Saving..." : "Save changes"}
               </button>
             </div>
-
           </div>
         </div>
       )}
-
     </div>
-  )
+  );
 }
 
-export default ManagerDashboard
+export default ManagerDashboard;
