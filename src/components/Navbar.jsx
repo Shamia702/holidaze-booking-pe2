@@ -1,31 +1,30 @@
-import { useState } from "react"
-import { Link, useNavigate, useLocation } from "react-router-dom"
-import logo from "../assets/holidaze-logo.svg"
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import logo from "../assets/holidaze-logo.svg";
 
 function Navbar() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const profile = JSON.parse(localStorage.getItem("profile") || "null")
-  const isLoggedIn = !!localStorage.getItem("token")
-  const isManager = profile?.venueManager
+  const profile = JSON.parse(localStorage.getItem("profile") || "null");
+  const isLoggedIn = !!localStorage.getItem("token");
+  const isManager = profile?.venueManager;
 
   function handleLogout() {
-    localStorage.removeItem("token")
-    localStorage.removeItem("profile")
-    navigate("/")
-    setMenuOpen(false)
+    localStorage.removeItem("token");
+    localStorage.removeItem("profile");
+    navigate("/");
+    setMenuOpen(false);
   }
 
   function closeMenu() {
-    setMenuOpen(false)
+    setMenuOpen(false);
   }
 
   return (
     <nav className="bg-white border-b border-warmgray relative z-50">
       <div className="h-16 flex items-center justify-between px-4 md:px-10">
-
         <Link to="/" onClick={closeMenu}>
           <img src={logo} alt="Holidaze" className="h-8" />
         </Link>
@@ -84,12 +83,25 @@ function Navbar() {
               </Link>
             </>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
-            >
-              Log out
-            </button>
+            <>
+              <div className="w-9 h-9 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-sm overflow-hidden flex-shrink-0">
+                {profile?.avatar?.url ? (
+                  <img
+                    src={profile.avatar.url}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  profile?.name?.charAt(0).toUpperCase()
+                )}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
+              >
+                Log out
+              </button>
+            </>
           )}
         </div>
 
@@ -113,12 +125,10 @@ function Navbar() {
             }`}
           ></span>
         </button>
-
       </div>
 
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-warmgray px-4 py-4 flex flex-col gap-3">
-
           <Link
             to="/"
             onClick={closeMenu}
@@ -165,19 +175,35 @@ function Navbar() {
               </Link>
             </div>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="w-full py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors mt-2"
-            >
-              Log out
-            </button>
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-coral/20 flex items-center justify-center text-coral font-medium text-sm overflow-hidden">
+                  {profile?.avatar?.url ? (
+                    <img
+                      src={profile.avatar.url}
+                      alt={profile.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    profile?.name?.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <span className="text-sm text-navy font-medium">
+                  {profile?.name}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-500 border border-warmgray rounded-lg hover:border-coral hover:text-coral transition-colors"
+              >
+                Log out
+              </button>
+            </div>
           )}
-
         </div>
       )}
-
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;
