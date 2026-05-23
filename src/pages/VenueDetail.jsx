@@ -144,9 +144,9 @@ function VenueDetail() {
             <hr className="border-warmgray" />
 
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
+              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
                 About this venue
-              </p>
+              </h2>
               <p className="text-sm text-gray-600 leading-relaxed">
                 {venue.description || "No description available"}
               </p>
@@ -155,9 +155,9 @@ function VenueDetail() {
             <hr className="border-warmgray" />
 
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
                 What this place offers
-              </p>
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {venue.meta?.wifi && (
                   <div className="flex items-center gap-3 bg-white border border-warmgray rounded-lg px-4 py-3 text-sm text-navy">
@@ -193,9 +193,9 @@ function VenueDetail() {
             <hr className="border-warmgray" />
 
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
                 Hosted by
-              </p>
+              </h2>
               <div className="bg-white border border-warmgray rounded-xl p-4 flex items-center gap-4">
                 {venue.owner?.avatar?.url ? (
                   <img
@@ -223,9 +223,9 @@ function VenueDetail() {
             <hr className="border-warmgray" />
 
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
                 Location
-              </p>
+              </h2>
               <div className="bg-green-50 border border-warmgray rounded-xl h-36 md:h-44 flex flex-col items-center justify-center gap-2">
                 <span className="text-3xl md:text-4xl">📍</span>
                 <p className="text-sm font-medium text-navy">
@@ -243,9 +243,9 @@ function VenueDetail() {
             <hr className="border-warmgray" />
 
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
                 Rating
-              </p>
+              </h2>
               <div className="bg-white border border-warmgray rounded-xl p-5 flex items-center gap-6">
                 <div className="text-center flex-shrink-0">
                   <div className="font-serif text-4xl md:text-5xl text-coral">

@@ -160,9 +160,9 @@ function Browse() {
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-medium text-navy text-sm mb-1 truncate">
+                  <h2 className="font-medium text-navy text-sm mb-1 truncate">
                     {venue.name}
-                  </h3>
+                  </h2>
                   <p className="text-xs text-gray-500 mb-3">
                     📍 {venue.location?.city || "Norway"},{" "}
                     {venue.location?.country || ""}

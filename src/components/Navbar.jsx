@@ -108,6 +108,7 @@ function Navbar() {
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden flex flex-col gap-1.5 p-2"
+          aria-label="Open menu"
         >
           <span
             className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${
