@@ -2,6 +2,8 @@
 
 A dual facing accommodation booking application built for the Noroff PE2 exam. Customers can browse and book venues while venue managers can create and manage their listings.
 
+![Holidaze screenshot](images/holidaze.jpg)
+
 ## Live Site
 
 [https://holidaze-booking-app.netlify.app](https://holidaze-booking-app.netlify.app)
